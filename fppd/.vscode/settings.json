@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "tuple": "c",
+        "*.tcc": "c",
+        "backeup": "c"
+    }
+}
