@@ -4,14 +4,15 @@
 #include <time.h>
 #include <string.h>
 
-#define TAMANHO_VETOR 10000000
-#define NUM_THREADS 4
+#define TAMANHO_VETOR 100000
+#define NUM_THREADS 2
 
 typedef struct pacoteThread *PacoteThread;
 
 struct pacoteThread
 {
-    pthread_mutex_t lock;
+    pthread_t threadId; // id criado pelo pthread_create
+    pthread_mutex_t *lock;
     int *vetor;
     double *globalIndex;
     double *soma;
@@ -36,17 +37,16 @@ void *thread(void *arg)
     int localIndex;
 
     PacoteThread pacote = (PacoteThread)arg;
-    pthread_mutex_t lock = pacote->lock;
     double *soma = pacote->soma;
     double *globalIndex = pacote->globalIndex;
     int *vetor = pacote->vetor;
 
     do
     {
-        pthread_mutex_lock(&pacote->lock);
+        pthread_mutex_lock(pacote->lock);
         localIndex = *globalIndex;
         *globalIndex = localIndex + 1;
-        pthread_mutex_unlock(&pacote->lock);
+        pthread_mutex_unlock(pacote->lock);
 
         if (localIndex < TAMANHO_VETOR)
         {
@@ -55,9 +55,9 @@ void *thread(void *arg)
 
     } while (localIndex < TAMANHO_VETOR);
 
-    pthread_mutex_lock(&pacote->lock);
+    pthread_mutex_lock(pacote->lock);
     *soma = *soma + localSum;
-    pthread_mutex_unlock(&pacote->lock);
+    pthread_mutex_unlock(pacote->lock);
     return 0;
 }
 
@@ -81,39 +81,38 @@ int somaSimples(int *vetor)
 
 int somaThreads(int *vetor)
 {
-    pthread_t threads[NUM_THREADS];
-    pthread_mutex_t mutex;
+    PacoteThread pacoteThread;
+    pthread_mutex_t lock;
     int i;
     double soma = 0;
     double globalIndex = 0;
     clock_t t;
 
-    t = clock(); // armazena tempo inicial
-
-    PacoteThread pacote = (PacoteThread)malloc(sizeof(struct pacoteThread));
-    pacote->globalIndex = &globalIndex;
-    pacote->soma = &soma;
-    pacote->vetor = vetor;
-    pacote->lock = mutex;
-    pthread_mutex_init(&pacote->lock, NULL);
+    pacoteThread = (PacoteThread)malloc(sizeof(struct pacoteThread) * NUM_THREADS);
+    pthread_mutex_init(&lock, NULL);
 
     // criando as threads
     for (i = 0; i < NUM_THREADS; i++)
     {
-        pthread_create(&threads[i], NULL, thread, (void *)pacote);
+        (pacoteThread + i)->globalIndex = &globalIndex;
+        (pacoteThread + i)->soma = &soma;
+        (pacoteThread + i)->vetor = vetor;
+        (pacoteThread + i)->lock = &lock;
+        // printf("\nPosicao %d - %d\n", (pacoteThread + i)->posicaoInicial, (pacoteThread + i)->posicaoFinal);
+        pthread_create(&((pacoteThread + i)->threadId), NULL, thread, (void *)(pacoteThread + i));
     }
 
+    t = clock(); // armazena tempo inicial
     // esperar todas as threads terminarem
     for (int i = 0; i < NUM_THREADS; i++)
     {
-        pthread_join(threads[i], NULL);
+        pthread_join((pacoteThread + i)->threadId, NULL);
     }
-    free(pacote);
-
     t = clock() - t; // tempo final - tempo inicial
 
     printf("\nSoma Thread: %lf\n", soma);
     printf("Tempo de Execução Threads: %lf\n", ((double)t));
+    free(pacoteThread);
 
     return 0;
 }

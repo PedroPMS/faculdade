@@ -4,19 +4,17 @@
 #include <time.h>
 #include <string.h>
 
-#define TAMANHO_VETOR 100000
-#define NUM_THREADS 2
+#define TAMANHO_VETOR 100000000
+#define NUM_THREADS 16
 
-typedef struct pacoteThread *PacoteThread;
-
-struct pacoteThread
+typedef struct
 {
     pthread_t threadId; // id criado pelo pthread_create
-    pthread_mutex_t *lock;
     int *vetor;
-    double *globalIndex;
-    double *soma;
-};
+    int posicaoInicial;
+    int posicaoFinal;
+    double soma;
+} PacoteThread;
 
 int *criarVetor()
 {
@@ -33,31 +31,17 @@ int *criarVetor()
 
 void *thread(void *arg)
 {
-    double localSum = 0;
-    int localIndex;
-
-    PacoteThread pacote = (PacoteThread)arg;
-    double *soma = pacote->soma;
-    double *globalIndex = pacote->globalIndex;
+    PacoteThread *pacote = (PacoteThread *)arg;
+    int posicaoInicial = pacote->posicaoInicial;
+    int posicaoFinal = pacote->posicaoFinal;
     int *vetor = pacote->vetor;
 
-    do
+    pacote->soma = 0;
+    for (int j = posicaoInicial; j < posicaoFinal; j++)
     {
-        pthread_mutex_lock(pacote->lock);
-        localIndex = *globalIndex;
-        *globalIndex = localIndex + 1;
-        pthread_mutex_unlock(pacote->lock);
-
-        if (localIndex < TAMANHO_VETOR)
-        {
-            localSum += vetor[localIndex];
-        }
-
-    } while (localIndex < TAMANHO_VETOR);
-
-    pthread_mutex_lock(pacote->lock);
-    *soma = *soma + localSum;
-    pthread_mutex_unlock(pacote->lock);
+        pacote->soma = pacote->soma + vetor[j];
+    }
+    // printf("\nThread %d - %d\n", posicaoInicial, posicaoFinal);
     return 0;
 }
 
@@ -81,32 +65,42 @@ int somaSimples(int *vetor)
 
 int somaThreads(int *vetor)
 {
-    PacoteThread pacoteThread;
-    pthread_mutex_t lock;
+    PacoteThread *pacoteThread;
     int i;
-    double soma = 0;
-    double globalIndex = 0;
+    double soma;
     clock_t t;
 
-    pacoteThread = (PacoteThread)malloc(sizeof(struct pacoteThread) * NUM_THREADS);
-    pthread_mutex_init(&lock, NULL);
+    t = clock(); // armazena tempo inicial
+
+    pacoteThread = malloc(sizeof(PacoteThread) * NUM_THREADS);
+
+    int tamanhoVetorDividido = TAMANHO_VETOR / NUM_THREADS;
+    int posicaoInicial = 0;
+    int posicaoFinal;
+    // populando o pacote de threads
+    for (i = 0; i < NUM_THREADS; i++)
+    {
+        posicaoFinal = posicaoInicial + tamanhoVetorDividido;
+
+        (pacoteThread + i)->posicaoInicial = posicaoInicial;
+        (pacoteThread + i)->posicaoFinal = posicaoFinal;
+        (pacoteThread + i)->vetor = vetor;
+
+        posicaoInicial = posicaoFinal;
+    }
 
     // criando as threads
     for (i = 0; i < NUM_THREADS; i++)
     {
-        (pacoteThread + i)->globalIndex = &globalIndex;
-        (pacoteThread + i)->soma = &soma;
-        (pacoteThread + i)->vetor = vetor;
-        (pacoteThread + i)->lock = &lock;
         // printf("\nPosicao %d - %d\n", (pacoteThread + i)->posicaoInicial, (pacoteThread + i)->posicaoFinal);
         pthread_create(&((pacoteThread + i)->threadId), NULL, thread, (void *)(pacoteThread + i));
     }
 
-    t = clock(); // armazena tempo inicial
     // esperar todas as threads terminarem
-    for (int i = 0; i < NUM_THREADS; i++)
+    for (i = 0; i < NUM_THREADS; i++)
     {
         pthread_join((pacoteThread + i)->threadId, NULL);
+        soma = soma + (pacoteThread + i)->soma;
     }
     t = clock() - t; // tempo final - tempo inicial
 
@@ -128,3 +122,50 @@ int main()
     free(vetor);
     return 0;
 }
+
+// int main()
+// {
+//     PacoteThread *structThread;
+//     int *vetor;
+
+//     vetor = criarVetor();
+//     // somaSimples(vetor);
+
+//     pthread_t threads[NUM_THREADS];
+//     int rc, t;
+
+//     int tamanhoVetorDividido = TAMANHO_VETOR / NUM_THREADS;
+//     int posicaoAtual = 0;
+//     int posicaoFinal;
+
+//     for (t = 0; t < NUM_THREADS; t++)
+//     {
+//         posicaoFinal = posicaoAtual + tamanhoVetorDividido;
+//         printf("\nThread %d - %d\n", posicaoAtual, posicaoFinal);
+
+//         structThread = malloc(sizeof(PacoteThread));
+//         structThread->vetor = vetor;
+//         structThread->posicaoInicial = posicaoAtual;
+//         structThread->posicaoFinal = posicaoFinal;
+
+//         printf("\nStruct %d - %d\n", structThread->posicaoInicial, structThread->posicaoFinal);
+
+//         // printf("Main: criando a thread %d!\n", t);
+//         rc = pthread_create(&threads[t], NULL, thread, (void *)structThread);
+//         if (rc)
+//         {
+//             printf("ERRO code is %d\n", rc);
+//             exit(-1);
+//         }
+//         posicaoAtual = posicaoFinal;
+//     }
+
+//     // esperar todas as threads terminarem
+//     for (int i = 0; i < NUM_THREADS; i++)
+//     {
+//         pthread_join(threads[i], NULL);
+//     }
+
+//     free(vetor);
+//     return 0;
+// }
