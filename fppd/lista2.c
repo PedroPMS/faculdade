@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define TAMANHO_VETOR 100000000
-#define NUM_THREADS 16
+#define NUM_THREADS 50
 
 typedef struct
 {
