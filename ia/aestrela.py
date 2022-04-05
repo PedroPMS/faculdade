@@ -85,6 +85,7 @@ def caminhoMatrix(matrix, rota, objetivo):
         if linhaPosterior > linhaAtual:
             caminhoDesenhado[linhaAtual][colunaAtual] = 'v'
     print (pandas.DataFrame(caminhoDesenhado))
+    print('\n\n')
 
 def caminhoImagem(matrix, rota, inicio, objetivo):
     caminhoDesenhado = np.copy(matrix.astype(int))
@@ -106,11 +107,13 @@ def caminhoImagem(matrix, rota, inicio, objetivo):
     plt.imshow(caminhoDesenhado, interpolation='nearest', cmap=cmap, norm=norm)
     plt.savefig('caminho.png')
 
+################################# iniciar algoritmo #################################
+nomeArquivo = 'matrix.txt'
+inicio = (14, 14) #defina o ponto inicial
+objetivo = (2, 10) #defina o ponto final
+#################################### fim ############################################
 
-matrix = np.loadtxt('matrix.txt').astype(int)
-inicio = (7, 12)
-objetivo = (0, 3)
-
+matrix = np.loadtxt(nomeArquivo).astype(int) #defina o arquivo com o Grid
 rota = aestrela(matrix, inicio, objetivo)
 rota = rota + [inicio]
 rota = rota[::-1]
