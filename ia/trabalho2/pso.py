@@ -7,7 +7,7 @@ class Particula:
         self.posicaoAtual=[]    # posicaoAtual da particula
         self.velocidade=[]      # velocidade da particula
         self.melhorPosicao=[]   # melhor posicaoAtual da particula
-        self.melhorErro=-1      # melhor custoAtual da particula
+        self.melhorCusto=-1      # melhor custoAtual da particula
         self.custoAtual=-1       # custoAtual da particula
 
         for i in range(0, numDimensoes):
@@ -19,9 +19,9 @@ class Particula:
         self.custoAtual = costFunc(self.posicaoAtual)
 
         # veifica se a posição atual é a melhor posição da particula
-        if (self.custoAtual < self.melhorErro or self.melhorErro == -1):
+        if (self.custoAtual < self.melhorCusto or self.melhorCusto == -1):
             self.melhorPosicao = self.posicaoAtual.copy()
-            self.melhorErro = self.custoAtual
+            self.melhorCusto = self.custoAtual
 
     # atualiza a velocidade da particula
     def atualizarVelocidade(self,melhorPosicaoBando):
@@ -74,7 +74,7 @@ def otimizar(costFunc, limites, numParticulas, numIteracoes, verbose=True):
         for j in range(0, numParticulas):
             enxame[j].calcularFitness(costFunc)
 
-            # verifica se a particula atual é a melhor do banco
+            # verifica se a particula atual é a melhor do bando
             if (enxame[j].custoAtual < melhorCustoBando) or (melhorCustoBando == -1):
                 melhorPosicaoBando = list(enxame[j].posicaoAtual)
                 melhorCustoBando = float(enxame[j].custoAtual)
@@ -105,7 +105,8 @@ def eggholder(x):
     return -(y_ + 47) * np.sin(np.sqrt(np.abs((x_ / 2) + y_ + 47))) - x_ * np.sin(np.sqrt(np.abs(x_ - (y_ + 47))))
 
 limite = [(-512,512),(-512,512)]
-numDimensoes = 2
+numDimensoes = len(limite)
+numParticulas = 50
+numIteracoes = 100
 
-
-otimizar(eggholder, limite, numParticulas=50, numIteracoes=100, verbose=True)
+otimizar(eggholder, limite, numParticulas, numIteracoes, verbose=True)
