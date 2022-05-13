@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from pprint import pprint
 import matplotlib.pyplot as plt
 
 class Particula:
@@ -67,6 +68,8 @@ def otimizar(costFunc, limites, numParticulas, numIteracoes, verbose=True):
 
     i=0
     while i < numIteracoes:
+        solucoes.append(melhorCustoBando)
+        medias.append(np.mean(solucoes))
         if verbose:
             print(f'Itereção: {i:>4d}, Melhor Solução: {melhorCustoBando:10.6f}')
 
@@ -83,8 +86,6 @@ def otimizar(costFunc, limites, numParticulas, numIteracoes, verbose=True):
         for j in range(0, numParticulas):
             enxame[j].atualizarVelocidade(melhorPosicaoBando)
             enxame[j].atualizarPosicao(limites)
-        solucoes.append(melhorCustoBando)
-        medias.append(np.mean(solucoes))
         i+=1
 
     if verbose:
@@ -94,9 +95,9 @@ def otimizar(costFunc, limites, numParticulas, numIteracoes, verbose=True):
         print(f'   > Melhor Resultado {melhorCustoBando}')
         plt.plot(x, solucoes, color='red')
         plt.plot(x, medias, color='blue')
-        plt.savefig('resultado.png')
+        plt.savefig('rodadapso.png')
 
-    return melhorCustoBando, melhorPosicaoBando
+    return melhorCustoBando, melhorPosicaoBando, solucoes
 
 def eggholder(x):
     x_ = x[0]
@@ -104,9 +105,31 @@ def eggholder(x):
 
     return -(y_ + 47) * np.sin(np.sqrt(np.abs((x_ / 2) + y_ + 47))) - x_ * np.sin(np.sqrt(np.abs(x_ - (y_ + 47))))
 
+###################### iniciar ######################
 limite = [(-512,512),(-512,512)]
 numDimensoes = len(limite)
 numParticulas = 50
-numIteracoes = 100
+numIteracoes = 20
 
-otimizar(eggholder, limite, numParticulas, numIteracoes, verbose=True)
+melhorSolucao = [0]
+solucoesEncontradas = []
+for i in range(10):
+    melhorCustoBando, melhorPosicaoBando, solucoes = otimizar(eggholder, limite, numParticulas, numIteracoes, verbose=False)
+
+    solucoesEncontradas.append(solucoes.copy())
+    # se a solução for menor (minimização) que a melhor até o momento, troca
+    if(solucoes[-1] < melhorSolucao[-1]):
+        melhorSolucao = solucoes.copy()
+
+media = []
+for j in range(len(solucoesEncontradas[0])): # para da iteração
+    iteracaoPso = []
+    for i in range(len(solucoesEncontradas)): # para cada execução do pso
+        iteracaoPso.append(solucoesEncontradas[i][j])
+    media.append(np.mean(iteracaoPso))
+
+print(media, '\n\n', melhorSolucao)
+x = list(range(0, numIteracoes))
+plt.plot(x, melhorSolucao, color='red')
+plt.plot(x, media, color='blue')
+plt.savefig('resultado.png')
