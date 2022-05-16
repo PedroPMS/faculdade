@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CAPACIDADE_BANCADA 6
+#define CAPACIDADE_MESA 6
 #define QTD_LABORATORIOS 3
 #define QTD_INFECTADOS 3
 #define QTD_TIPOS_DE_INSUMO 3
@@ -41,7 +41,7 @@ typedef struct
     int ciclosAtual;
     insumo *insumo1;
     insumo *insumo2;
-    pthread_mutex_t *bancadaMutex;
+    pthread_mutex_t *mesaMutex;
     sem_t *atingiramObjetivo;
 } pacoteLaboratorio;
 
@@ -52,20 +52,14 @@ typedef struct
     int qtdMinimaDoses;
     int ciclosAtual;
     tipoInsumo insumoInfinito;
-    insumo *bancada;
-    pthread_mutex_t *bancadaMutex;
+    insumo *mesa;
+    pthread_mutex_t *mesaMutex;
     sem_t *atingiramObjetivo;
 } pacoteInfectado;
 
-/* realiza os prints das informações do infectado e labotório */
-void print_tipo_insumo(tipoInsumo tipo_insumo);
-void print_laboratorio(int id, tipoInsumo tipo_insumo);
-void print_infectado(int id, tipoInsumo tipo_insumo);
-
-/* preenche os indices da bancada que tem disponível os insumos que o infectado necessita */
-void indicesProdutosFaltantes(insumo *bancada, int capacidadeDaBancada, tipoInsumo insumoDoInfectado, int *indiceProduto1, int *indiceProduto2)
+/* preenche os indices da mesa que tem disponível os insumos que o infectado necessita */
+void indicesProdutosFaltantes(insumo *mesa, int capacidadeDaBancada, tipoInsumo insumoDoInfectado, int *indiceProduto1, int *indiceProduto2)
 {
-
     tipoInsumo insumo1Tipo;
     tipoInsumo insumo2Tipo;
     int totalProduto;
@@ -103,13 +97,13 @@ void indicesProdutosFaltantes(insumo *bancada, int capacidadeDaBancada, tipoInsu
     while ((*indiceProduto1 == -1 || *indiceProduto2 == -1) && (produtoVerificados <= capacidadeDaBancada))
     {
 
-        if (sem_getvalue(&(bancada[i].total), &totalProduto) == 0)
+        if (sem_getvalue(&(mesa[i].total), &totalProduto) == 0)
         {
-            if ((totalProduto > 0) && (bancada[i].tipo == insumo1Tipo) && (*indiceProduto1 == -1))
+            if ((totalProduto > 0) && (mesa[i].tipo == insumo1Tipo) && (*indiceProduto1 == -1))
             {
                 *indiceProduto1 = i;
             }
-            else if ((totalProduto > 0) && (bancada[i].tipo == insumo2Tipo) && (*indiceProduto2 == -1))
+            else if ((totalProduto > 0) && (mesa[i].tipo == insumo2Tipo) && (*indiceProduto2 == -1))
             {
                 *indiceProduto2 = i;
             }
@@ -144,7 +138,7 @@ void *threadLaboratorio(void *argumento)
             if ((totalProduto1 == 0) && (totalProduto2 == 0))
             {
 
-                pthread_mutex_lock(laboratorio->bancadaMutex);
+                pthread_mutex_lock(laboratorio->mesaMutex);
 
                 if ((sem_post(&(laboratorio->insumo1->total)) == 0) && (sem_post(&(laboratorio->insumo2->total)) == 0))
                 {
@@ -155,13 +149,9 @@ void *threadLaboratorio(void *argumento)
                     }
                 }
 
-                pthread_mutex_unlock(laboratorio->bancadaMutex);
+                pthread_mutex_unlock(laboratorio->mesaMutex);
 
-                // #if defined(_WIN32) || defined(__CYGWIN__)
-                //                 Sleep(tempo * 1000);
-                // #else
                 sleep(tempo);
-                // #endif
             }
         }
 
@@ -193,22 +183,22 @@ void *threadInfectado(void *argumento)
         indiceProduto1 = -1;
         indiceProduto2 = -1;
 
-        indicesProdutosFaltantes(infectado->bancada, CAPACIDADE_BANCADA, infectado->insumoInfinito, &indiceProduto1, &indiceProduto2);
+        indicesProdutosFaltantes(infectado->mesa, CAPACIDADE_MESA, infectado->insumoInfinito, &indiceProduto1, &indiceProduto2);
 
         if ((indiceProduto1 != -1) && (indiceProduto2 != -1))
         {
 
-            pthread_mutex_lock(infectado->bancadaMutex);
+            pthread_mutex_lock(infectado->mesaMutex);
 
             indiceProduto1 = -1;
             indiceProduto2 = -1;
 
-            indicesProdutosFaltantes(infectado->bancada, CAPACIDADE_BANCADA, infectado->insumoInfinito, &indiceProduto1, &indiceProduto2);
+            indicesProdutosFaltantes(infectado->mesa, CAPACIDADE_MESA, infectado->insumoInfinito, &indiceProduto1, &indiceProduto2);
 
             if ((indiceProduto1 != -1) && (indiceProduto2 != -1))
             {
 
-                if ((sem_wait(&(infectado->bancada[indiceProduto1].total)) == 0) && (sem_wait(&(infectado->bancada[indiceProduto2].total)) == 0))
+                if ((sem_wait(&(infectado->mesa[indiceProduto1].total)) == 0) && (sem_wait(&(infectado->mesa[indiceProduto2].total)) == 0))
                 {
                     infectado->ciclosAtual++;
                     if (infectado->ciclosAtual == infectado->qtdMinimaDoses)
@@ -218,7 +208,7 @@ void *threadInfectado(void *argumento)
                 }
             }
 
-            pthread_mutex_unlock(infectado->bancadaMutex);
+            pthread_mutex_unlock(infectado->mesaMutex);
         }
 
         if (sem_getvalue(infectado->atingiramObjetivo, &atingiramObjetivo) == 0)
@@ -238,38 +228,37 @@ int main(int argc, char **argv)
 
     /* DECLARAÇÃO DAS VARIÁVEIS */
     int i, qtdMinimaDoses;
-    insumo *bancada;
+    insumo *mesa;
     pacoteLaboratorio *laboratorios;
     pacoteInfectado *infectados;
-    pthread_mutex_t bancadaMutex;
+    pthread_mutex_t mesaMutex;
     sem_t atingiramObjetivo;
 
     /* VALIDAÇÃO DE ENTRADAS */
     if (argc != 2)
     {
-        printf("\nA quantidade de argumentos eh invalida!\n");
-        printf("\nO unico argumento esperado eh o numero minimo de vezes que cada um deve realizar seu objetivo primordial.\n\n");
+        printf("\nO objetivo primordial é inválido!\n\n");
         return -1;
     }
     else if (atoi(argv[1]) < 1)
     {
-        printf("\nO valor do argumento eh invalido!\n\n");
+        printf("\nO objetivo primordial é inválido!\n\n");
         return -1;
     }
 
     /* INICIALIZAÇÃO DAS VARIÁVEIS */
     qtdMinimaDoses = atoi(argv[1]);
     laboratorios = malloc(sizeof(pacoteLaboratorio) * QTD_LABORATORIOS);
-    bancada = malloc(sizeof(insumo) * CAPACIDADE_BANCADA); // A bancada terá o tamanho necessário para receber 2 insumos de cada laboratório, totalizando 6
+    mesa = malloc(sizeof(insumo) * CAPACIDADE_MESA); // A mesa terá o tamanho necessário para receber 2 insumos de cada laboratório, totalizando 6
     infectados = malloc(sizeof(pacoteInfectado) * QTD_INFECTADOS);
-    pthread_mutex_init(&bancadaMutex, NULL);
+    pthread_mutex_init(&mesaMutex, NULL);
     sem_init(&atingiramObjetivo, 0, 0);
 
-    /* INICIALIZA BANCADA */
-    for (i = 0; i < CAPACIDADE_BANCADA; i++)
+    /* INICIALIZA MESA */
+    for (i = 0; i < CAPACIDADE_MESA; i++)
     {
-        sem_init(&(bancada[i].total), 0, 0);
-        bancada[i].tipo = (tipoInsumo)i % QTD_TIPOS_DE_INSUMO;
+        sem_init(&(mesa[i].total), 0, 0);
+        mesa[i].tipo = (tipoInsumo)i % QTD_TIPOS_DE_INSUMO;
     }
 
     /* INICIALIZA LABORATÓRIOS */
@@ -279,27 +268,24 @@ int main(int argc, char **argv)
         laboratorios[i].id = i + 1;
         laboratorios[i].qtdMinimaDoses = qtdMinimaDoses;
         laboratorios[i].ciclosAtual = 0;
-        laboratorios[i].bancadaMutex = &bancadaMutex;
+        laboratorios[i].mesaMutex = &mesaMutex;
         laboratorios[i].atingiramObjetivo = &atingiramObjetivo;
-        laboratorios[i].insumo1 = &(bancada[produto]);
+        laboratorios[i].insumo1 = &(mesa[produto]);
         produto++;
-        laboratorios[i].insumo2 = &(bancada[produto]);
+        laboratorios[i].insumo2 = &(mesa[produto]);
         produto++;
-        // print_laboratorio(laboratorios[i].id, laboratorios[i].insumo1->tipo);
-        // print_laboratorio(laboratorios[i].id, laboratorios[i].insumo2->tipo);
     }
 
     /* INICIALIZA INFECTADOS */
     for (i = 0; i < QTD_INFECTADOS; i++)
     {
         infectados[i].id = i + 1;
-        infectados[i].bancada = bancada;
+        infectados[i].mesa = mesa;
         infectados[i].qtdMinimaDoses = qtdMinimaDoses;
         infectados[i].ciclosAtual = 0;
-        infectados[i].bancadaMutex = &bancadaMutex;
+        infectados[i].mesaMutex = &mesaMutex;
         infectados[i].atingiramObjetivo = &atingiramObjetivo;
         infectados[i].insumoInfinito = (tipoInsumo)i;
-        // print_infectado(infectados[i].id, infectados[i].insumoInfinito);
     }
 
     /* EXECUTA AS THREADS */
@@ -335,47 +321,15 @@ int main(int argc, char **argv)
     }
 
     /* DESTRÓI MEMÓRIA ALOCADA */
-    for (i = 0; i < (CAPACIDADE_BANCADA); i++)
+    for (i = 0; i < (CAPACIDADE_MESA); i++)
     {
-        sem_destroy(&(bancada[i].total));
+        sem_destroy(&(mesa[i].total));
     }
-    pthread_mutex_destroy(&bancadaMutex);
+    pthread_mutex_destroy(&mesaMutex);
     sem_destroy(&atingiramObjetivo);
     free(laboratorios);
     free(infectados);
-    free(bancada);
+    free(mesa);
 
     return 0;
-}
-
-/* funções extras para mostrar as informações do laboratorio e infectado */
-
-void print_laboratorio(int id, tipoInsumo tipo_insumo)
-{
-    printf("LAB %d Tem ", id);
-    print_tipo_insumo(tipo_insumo);
-    printf("\n");
-}
-
-void print_infectado(int id, tipoInsumo tipo_insumo)
-{
-    printf("INF %d Tem ", id);
-    print_tipo_insumo(tipo_insumo);
-    printf("\n");
-}
-
-void print_tipo_insumo(tipoInsumo tipo_insumo)
-{
-    switch (tipo_insumo)
-    {
-    case Virus:
-        printf("virus");
-        break;
-    case Injecao:
-        printf("injecao");
-        break;
-    case insumoSecreto:
-        printf("insumoSecreto");
-        break;
-    }
 }
