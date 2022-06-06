@@ -2,6 +2,9 @@
     "files.associations": {
         "tuple": "c",
         "*.tcc": "c",
-        "backeup": "c"
-    }
+        "backeup": "c",
+        "semaphore.h": "c",
+        "stdio.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
