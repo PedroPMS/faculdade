@@ -25,20 +25,20 @@ rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
 #     [16, 22, 19, 9, 12, 15]
 # ]
 
-distanciaTotal = tsp.rodadaTsp(rotas, deposito, clientes)
+distanciaTotal = tsp.rodadaTsp(rotas, clientes)
 print('Distancia Primeiro TSP =', distanciaTotal)
 melhorRota = copy.deepcopy(rotas)
 contadorDeNaoMelhoras = 0 # contador para acumular quantas vezes houve troca de rota sem melhora na rota final
 
-for i in range(100):
+for i in range(500):
     novasRotas = trocarClientes(melhorRota) # VNS para troca entre clusters
 
-    distanciaTotalAtual = tsp.rodadaTsp(novasRotas, deposito, clientes)
-    if(distanciaTotalAtual < distanciaTotal):
-        print('Distancia Total =', distanciaTotal)
-        print('Distancia Troca Clientes =', distanciaTotalAtual, '\n')
-        melhorRota = copy.deepcopy(novasRotas)
-        distanciaTotal = distanciaTotalAtual
+    # distanciaTotalAtual = tsp.rodadaTsp(novasRotas, deposito, clientes)
+    # if(distanciaTotalAtual < distanciaTotal):
+    #     print('Distancia Total =', distanciaTotal)
+    #     print('Distancia Troca Clientes =', distanciaTotalAtual, '\n')
+    #     melhorRota = copy.deepcopy(novasRotas)
+    #     distanciaTotal = distanciaTotalAtual
 
     novasRotas = retirarClientes(rotas)
 
@@ -49,7 +49,9 @@ for i in range(100):
     #     melhorRota = copy.deepcopy(novasRotas)
     #     distanciaTotal = distanciaTotalAtual
 
+    distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
     if(distanciaTotalAtual < distanciaTotal):
+        print(novasRotas)
         print('Distancia Total =', distanciaTotal)
         print('Distancia Nova =', distanciaTotalAtual, '\n')
         melhorRota = copy.deepcopy(novasRotas)

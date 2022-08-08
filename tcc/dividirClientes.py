@@ -11,7 +11,7 @@ def gerarRotasIniciais(qtdVeiculos, clientes):
     qtdClientes = len(clientes)
 
     for i in range(qtdVeiculos):
-        rotas.append([])
+        rotas.append([0])
 
     listaClientesDisponiveis = []
     for i in range(qtdClientes):
