@@ -3,14 +3,30 @@ import numpy as np
 from itertools import permutations
 
 def rodadaTsp(rotas, clientes):
+    # rotas = [[0, 4, 30, 6, 10, 18, 9, 0]]
+    # rotas = [[0, 4, 30, 6, 18, 10, 9, 0]]
     distanciaTotal = 0
-    # print(clientes)
     for rota in rotas:
         rota = rota.copy()
-        melhorRota, menorCusto = travellingSalesmanProblem(clientes, rota)
+        custo = custoRota(clientes, rota)
 
-        distanciaTotal += menorCusto
+        distanciaTotal += custo
     return distanciaTotal
+
+def custoRota(clientes, rotaVeiculo):
+    custo = 0
+    i = 0
+    while(i < len(rotaVeiculo)-1):
+        if(i == 0 or i == len(rotaVeiculo)-1):
+            # print(clientes[0][rotaVeiculo[i+1]])
+            # print(0,rotaVeiculo[i+1])
+            custo += clientes[0][rotaVeiculo[i+1]]
+        else:
+            # print(clientes[rotaVeiculo[i]][rotaVeiculo[i+1]])
+            # print(rotaVeiculo[i], rotaVeiculo[i+1])
+            custo += clientes[rotaVeiculo[i]][rotaVeiculo[i+1]]
+        i += 1
+    return custo
 
 def travellingSalesmanProblem(clientes, rotaVeiculo, s = 0):
     # store all vertex apart from source vertex
@@ -47,5 +63,4 @@ def travellingSalesmanProblem(clientes, rotaVeiculo, s = 0):
         if (custoAtual < menorCusto):
             menorCusto = custoAtual
             melhorRota = rota.copy()
-
     return melhorRota, menorCusto

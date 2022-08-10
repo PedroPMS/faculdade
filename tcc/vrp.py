@@ -1,14 +1,18 @@
 import copy
 import pandas as pd
+from datetime import datetime
 import tsp
 import dividirClientes
 from trocarClientes import trocarClientes
 from retirarClientes import retirarClientes
+from twoOpt import twoOpt
+from realocacao import realocacao
 
 from matplotlib import pyplot as plt
 plt.style.use('bmh')
 
 # ---------------------------------------------------------------------------------- #
+start_time = datetime.now()
 clientes = pd.read_csv('A-n32-k5.txt', sep=' ', header=None)
 numVeiculos = 5
 
@@ -28,34 +32,28 @@ rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
 distanciaTotal = tsp.rodadaTsp(rotas, clientes)
 print('Distancia Primeiro TSP =', distanciaTotal)
 melhorRota = copy.deepcopy(rotas)
-contadorDeNaoMelhoras = 0 # contador para acumular quantas vezes houve troca de rota sem melhora na rota final
+novasRotas = twoOpt(melhorRota, clientes)
+distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
+print('Distancia 2Opt =', distanciaTotalAtual, '\n')
+realocacao(novasRotas, clientes)
+distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
+print('Distancia Realocação =', distanciaTotalAtual, '\n')
 
-for i in range(500):
-    novasRotas = trocarClientes(melhorRota) # VNS para troca entre clusters
+# for i in range(1):
+#     # novasRotas = trocarClientes(melhorRota) # VNS para troca entre clusters
+#     # novasRotas = retirarClientes(rotas)
+#     novasRotas = twoOpt(melhorRota, clientes)
+#     distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
 
-    # distanciaTotalAtual = tsp.rodadaTsp(novasRotas, deposito, clientes)
-    # if(distanciaTotalAtual < distanciaTotal):
-    #     print('Distancia Total =', distanciaTotal)
-    #     print('Distancia Troca Clientes =', distanciaTotalAtual, '\n')
-    #     melhorRota = copy.deepcopy(novasRotas)
-    #     distanciaTotal = distanciaTotalAtual
-
-    novasRotas = retirarClientes(rotas)
-
-    # distanciaTotalAtual = tsp.rodadaTsp(novasRotas, deposito, clientes)
-    # if(distanciaTotalAtual < distanciaTotal):
-    #     print('Distancia Total =', distanciaTotal)
-    #     print('Distancia Retirar Clientes =', distanciaTotalAtual, '\n')
-    #     melhorRota = copy.deepcopy(novasRotas)
-    #     distanciaTotal = distanciaTotalAtual
-
-    distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
-    if(distanciaTotalAtual < distanciaTotal):
-        print(novasRotas)
-        print('Distancia Total =', distanciaTotal)
-        print('Distancia Nova =', distanciaTotalAtual, '\n')
-        melhorRota = copy.deepcopy(novasRotas)
-        distanciaTotal = distanciaTotalAtual
+#     distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
+#     if(distanciaTotalAtual < distanciaTotal):
+#         print(novasRotas, 'i = ', i)
+#         print('Distancia Total =', distanciaTotal)
+#         print('Distancia Nova =', distanciaTotalAtual, '\n')
+#         melhorRota = copy.deepcopy(novasRotas)
+#         distanciaTotal = distanciaTotalAtual
 
 
-print('\nDistancia Final =', distanciaTotal)
+end_time = datetime.now()
+# print('\nDistancia Final =', distanciaTotal)
+print('Duration: {}'.format(end_time - start_time))
