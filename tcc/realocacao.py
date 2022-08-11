@@ -1,13 +1,14 @@
-import copy
-import tsp
-
 def realocacaoCliente(veiculo1, veiculo2, matrixCusto):
     menorCusto = 0
     cliente = -1
     posicao = -1
 
     for i in range(1, len(veiculo1) - 1):
+        if(len(veiculo1) <= 4):
+            continue
         for j in range(len(veiculo2) - 1):
+            if(len(veiculo2) >= 10):
+                continue
             novaRota = veiculo2[:j + 1] + [veiculo1[i]] + veiculo2[j + 1:]
 
             melhoriaVeiculo1 = matrixCusto[veiculo1[i - 1]][veiculo1[i]] + matrixCusto[veiculo1[i]][veiculo1[i + 1]] - matrixCusto[veiculo1[i - 1]][veiculo1[i + 1]]

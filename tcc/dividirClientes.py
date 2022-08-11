@@ -1,4 +1,3 @@
-import pandas as pd
 import math
 import random
 
@@ -29,7 +28,7 @@ def gerarRotasIniciais(qtdVeiculos, clientes):
                 break
         i += 1
     for rota in rotas:
-        #Inicia no 0, depósito
+        #Finaliza no 0, depósito
         rota.append(0)
     return rotas
 

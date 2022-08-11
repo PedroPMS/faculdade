@@ -1,10 +1,7 @@
-import copy
 import pandas as pd
 from datetime import datetime
-import tsp
+from calcularCusto import calcularCusto
 import dividirClientes
-from trocarClientes import trocarClientes
-from retirarClientes import retirarClientes
 from twoOpt import twoOpt
 from realocacao import realocacao
 
@@ -13,14 +10,10 @@ plt.style.use('bmh')
 
 # ---------------------------------------------------------------------------------- #
 start_time = datetime.now()
-clientes = pd.read_csv('A-n32-k5.txt', sep=' ', header=None)
+clientes = pd.read_csv('A-n32-k5.txt', sep=' ', header=None).values.tolist()
+# print(clientes)
 numVeiculos = 5
 
-clientes = clientes.values
-clientes = clientes.tolist()
-deposito = clientes[0]
-
-rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
 # rotas = [
 #     [21, 25, 30, 31, 20, 2, 6],
 #     [28, 4, 10, 14, 8, 18],
@@ -29,31 +22,21 @@ rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
 #     [16, 22, 19, 9, 12, 15]
 # ]
 
-distanciaTotal = tsp.rodadaTsp(rotas, clientes)
-print('Distancia Primeiro TSP =', distanciaTotal)
-melhorRota = copy.deepcopy(rotas)
-novasRotas = twoOpt(melhorRota, clientes)
-distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
-print('Distancia 2Opt =', distanciaTotalAtual, '\n')
-realocacao(novasRotas, clientes)
-distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
-print('Distancia Realocação =', distanciaTotalAtual, '\n')
+for i in range(100):
+    rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
+    distanciaTotal = calcularCusto(rotas, clientes)
+    # print('Distancia Primeiro TSP =', distanciaTotal)
 
-# for i in range(1):
-#     # novasRotas = trocarClientes(melhorRota) # VNS para troca entre clusters
-#     # novasRotas = retirarClientes(rotas)
-#     novasRotas = twoOpt(melhorRota, clientes)
-#     distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
-
-#     distanciaTotalAtual = tsp.rodadaTsp(novasRotas, clientes)
-#     if(distanciaTotalAtual < distanciaTotal):
-#         print(novasRotas, 'i = ', i)
-#         print('Distancia Total =', distanciaTotal)
-#         print('Distancia Nova =', distanciaTotalAtual, '\n')
-#         melhorRota = copy.deepcopy(novasRotas)
-#         distanciaTotal = distanciaTotalAtual
+    for i in range(500):
+        rotas = twoOpt(rotas, clientes)
+        rotas = realocacao(rotas, clientes)
+    distanciaTotal = calcularCusto(rotas, clientes)
+    if(distanciaTotal <= 784):
+        print(rotas, distanciaTotal)
 
 
 end_time = datetime.now()
-# print('\nDistancia Final =', distanciaTotal)
+distanciaTotal = calcularCusto(rotas, clientes)
+print('Distancia Final =', distanciaTotal, '\n')
+print(rotas)
 print('Duration: {}'.format(end_time - start_time))
