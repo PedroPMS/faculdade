@@ -4,6 +4,7 @@ from calcularCusto import calcularCusto
 import dividirClientes
 from twoOpt import twoOpt
 from realocacao import realocacao
+from troca import troca
 
 from matplotlib import pyplot as plt
 plt.style.use('bmh')
@@ -27,8 +28,10 @@ for i in range(100):
     distanciaTotal = calcularCusto(rotas, clientes)
     # print('Distancia Primeiro TSP =', distanciaTotal)
 
-    for i in range(500):
+    for j in range(500):
+        # print(j)
         rotas = twoOpt(rotas, clientes)
+        rotas = troca(rotas, clientes)
         rotas = realocacao(rotas, clientes)
     distanciaTotal = calcularCusto(rotas, clientes)
     if(distanciaTotal <= 784):

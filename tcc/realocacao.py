@@ -4,7 +4,7 @@ def realocacaoCliente(veiculo1, veiculo2, matrixCusto):
     posicao = -1
 
     for i in range(1, len(veiculo1) - 1):
-        if(len(veiculo1) <= 4):
+        if(len(veiculo1) <= 3):
             continue
         for j in range(len(veiculo2) - 1):
             if(len(veiculo2) >= 10):
@@ -41,9 +41,10 @@ def realocacao(rotas, matrixCusto):
                     Posicao = posicao
                     MenorCusto = menorCusto
 
-    # print(rotas[veiculo1], rotas[veiculo2])
-    rotas[Veiculo2].insert(Posicao + 1, rotas[Veiculo1][Cliente])
-    del rotas[Veiculo1][Cliente]
-    # print(rotas[veiculo1], rotas[veiculo2])
+    # print(rotas[Veiculo1], rotas[Veiculo2])
+    if(Veiculo1 != -1 and Veiculo2 != -1):
+        rotas[Veiculo2].insert(Posicao + 1, rotas[Veiculo1][Cliente])
+        del rotas[Veiculo1][Cliente]
+    # print(rotas[Veiculo1], rotas[Veiculo2])
 
     return rotas
