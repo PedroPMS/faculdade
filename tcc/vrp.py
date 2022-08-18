@@ -5,6 +5,7 @@ import dividirClientes
 from twoOpt import twoOpt
 from realocacao import realocacao
 from troca import troca
+from lambdaInterchange import lambdaInterchange
 
 from matplotlib import pyplot as plt
 plt.style.use('bmh')
@@ -23,23 +24,25 @@ numVeiculos = 5
 #     [16, 22, 19, 9, 12, 15]
 # ]
 
-for i in range(100):
+distanciaGeral = 0
+for i in range(1):
     rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:])
     distanciaTotal = calcularCusto(rotas, clientes)
     # print('Distancia Primeiro TSP =', distanciaTotal)
 
-    for j in range(500):
+    for j in range(50):
         # print(j)
         rotas = twoOpt(rotas, clientes)
         rotas = troca(rotas, clientes)
-        rotas = realocacao(rotas, clientes)
+        # rotas = lambdaInterchange(rotas, clientes, 2)
+        # rotas = realocacao(rotas, clientes)
     distanciaTotal = calcularCusto(rotas, clientes)
+    distanciaGeral = distanciaTotal
     if(distanciaTotal <= 784):
         print(rotas, distanciaTotal)
 
 
 end_time = datetime.now()
-distanciaTotal = calcularCusto(rotas, clientes)
-print('Distancia Final =', distanciaTotal, '\n')
+print('Distancia Final =', distanciaGeral, '\n')
 print(rotas)
 print('Duration: {}'.format(end_time - start_time))
