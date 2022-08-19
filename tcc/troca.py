@@ -1,26 +1,30 @@
-def trocaCliente(veiculo1, veiculo2, matrixCusto):
+def trocaCliente(veiculo1, veiculo2, matrixCusto, demanda, capacidade):
     menorCusto = 0
     posicao1 = -1
     posicao2 = -1
 
     for i in range(1, len(veiculo1) - 1):
         for j in range(1, len(veiculo2) - 1):
-            novaRota1 = veiculo1[:i] + [veiculo2[j]] + veiculo1[i + 1:]
-            novaRota2 = veiculo2[:j] + [veiculo1[i]] + veiculo2[j + 1:]
+            novaDemandaVeiculo1 = demanda[veiculo2[j]] + sum(demanda[veiculo1]) - demanda[veiculo1[i]]
+            novaDemandaVeiculo2 = demanda[veiculo1[i]] + sum(demanda[veiculo2]) - demanda[veiculo2[j]]
 
-            custoTroca1 = matrixCusto[veiculo1[i - 1]][veiculo2[j]] + matrixCusto[veiculo2[j]][veiculo1[i + 1]] - matrixCusto[veiculo1[i - 1]][veiculo1[i]] - matrixCusto[veiculo1[i]][veiculo1[i + 1]]
-            custoTroca2 = matrixCusto[veiculo2[j - 1]][veiculo1[i]] + matrixCusto[veiculo1[i]][veiculo2[j + 1]] - matrixCusto[veiculo2[j - 1]][veiculo2[j]] - matrixCusto[veiculo2[j]][veiculo2[j + 1]]
+            if (novaDemandaVeiculo1 <= capacidade) and (novaDemandaVeiculo2 <= capacidade):
+                novaRota1 = veiculo1[:i] + [veiculo2[j]] + veiculo1[i + 1:]
+                novaRota2 = veiculo2[:j] + [veiculo1[i]] + veiculo2[j + 1:]
 
-            melhoriaCusto = custoTroca1 + custoTroca2
-            if melhoriaCusto < menorCusto:
-                menorCusto = melhoriaCusto
-                posicao1 = i
-                posicao2 = j
+                custoTroca1 = matrixCusto[veiculo1[i - 1]][veiculo2[j]] + matrixCusto[veiculo2[j]][veiculo1[i + 1]] - matrixCusto[veiculo1[i - 1]][veiculo1[i]] - matrixCusto[veiculo1[i]][veiculo1[i + 1]]
+                custoTroca2 = matrixCusto[veiculo2[j - 1]][veiculo1[i]] + matrixCusto[veiculo1[i]][veiculo2[j + 1]] - matrixCusto[veiculo2[j - 1]][veiculo2[j]] - matrixCusto[veiculo2[j]][veiculo2[j + 1]]
+
+                melhoriaCusto = custoTroca1 + custoTroca2
+                if melhoriaCusto < menorCusto:
+                    menorCusto = melhoriaCusto
+                    posicao1 = i
+                    posicao2 = j
                 # print(melhoriaCusto, novaRota1, novaRota2)
 
     return posicao1, posicao2, menorCusto
 
-def troca(rotas, matrixCusto):
+def troca(rotas, matrixCusto, demanda, capacidade):
     MenorCusto = 0
     Veiculo1 = -1
     Veiculo2 = -1
@@ -30,7 +34,7 @@ def troca(rotas, matrixCusto):
     for veiculo1 in range(len(rotas) - 1):
         for veiculo2 in range(veiculo1 + 1, len(rotas)):
             if veiculo1 != veiculo2:
-                [posicao1, posicao2, menorCusto] = trocaCliente(rotas[veiculo1], rotas[veiculo2], matrixCusto)
+                [posicao1, posicao2, menorCusto] = trocaCliente(rotas[veiculo1], rotas[veiculo2], matrixCusto, demanda, capacidade)
 
                 if menorCusto < MenorCusto:
                     Veiculo1 = veiculo1
