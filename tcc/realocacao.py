@@ -4,8 +4,8 @@ def realocacaoCliente(veiculo1, veiculo2, matrixCusto, demanda, capacidade):
     posicao = -1
 
     for i in range(1, len(veiculo1) - 1):
-        if demanda[veiculo1[i]] + sum(demanda[veiculo2]) <= capacidade:
-            for j in range(len(veiculo2) - 1):
+        if (demanda[veiculo1[i]] + sum(demanda[veiculo2]) <= capacidade) and (sum(demanda[veiculo1]) - demanda[veiculo1[i]] > 0):
+            for j in range(1, len(veiculo2) - 1):
                 novaRota = veiculo2[:j + 1] + [veiculo1[i]] + veiculo2[j + 1:]
 
                 melhoriaVeiculo1 = matrixCusto[veiculo1[i - 1]][veiculo1[i]] + matrixCusto[veiculo1[i]][veiculo1[i + 1]] - matrixCusto[veiculo1[i - 1]][veiculo1[i + 1]]
@@ -39,7 +39,7 @@ def realocacao(rotas, matrixCusto, demanda, capacidade):
                     MenorCusto = menorCusto
 
     # print(rotas[Veiculo1], rotas[Veiculo2])
-    if(Veiculo1 != -1 and Veiculo2 != -1 and len(rotas[Veiculo1]) > 3):
+    if(Veiculo1 != -1 and Veiculo2 != -1):
         rotas[Veiculo2].insert(Posicao + 1, rotas[Veiculo1][Cliente])
         del rotas[Veiculo1][Cliente]
     # print(rotas[Veiculo1], rotas[Veiculo2])
