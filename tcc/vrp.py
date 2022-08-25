@@ -1,14 +1,14 @@
 import sys
-import pandas as pd
-import numpy as np
 from datetime import datetime
-from calcularCusto import calcularCusto
-import dividirClientes
-from twoOpt import twoOpt
-from realocacao import realocacao
-from troca import troca
+
 from prepararDados import carregarDados
-from orOpt import orOpt
+import dividirClientes
+from calcularCusto import calcularCusto
+
+from vizinhancas.twoOpt import twoOpt
+from vizinhancas.realocacao import realocacao
+from vizinhancas.troca import troca
+from vizinhancas.orOpt import orOpt
 
 from matplotlib import pyplot as plt
 plt.style.use('bmh')
@@ -25,19 +25,16 @@ def vrp_graph(tour, x, y, name):
     plt.savefig(name)
 
 # ---------------------------------------------------------------------------------- #
-start_time = datetime.now()
-capacidade = 100
-numVeiculos = 5
-clientes, demanda, xcoor, ycoor = carregarDados()
+
+clientes, demanda, xcoor, ycoor, capacidade, numVeiculos, resultadoOtimo = carregarDados('A-n32-k5vrp.txt')
 clientes = clientes.tolist()
 
-
 distanciaGeral = sys.maxsize
-for i in range(100):
+start_time = datetime.now()
+for i in range(50):
     rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:], demanda, capacidade)
     backup = rotas.copy()
     distanciaTotal = calcularCusto(rotas, clientes)
-    # print('Distancia Primeiro TSP =', distanciaTotal)
 
     for j in range(50):
         rotas = twoOpt(rotas, clientes)

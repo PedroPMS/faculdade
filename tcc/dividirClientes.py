@@ -1,6 +1,4 @@
-import math
 import random
-
 
 def gerarRotasIniciais(qtdVeiculos, matrixCusto, demanda, capacidade):
     matrixCusto.pop(0) #retirando depósito
@@ -35,19 +33,3 @@ def gerarRotasIniciais(qtdVeiculos, matrixCusto, demanda, capacidade):
         #Finaliza no 0, depósito
         rota.append(0)
     return rotas
-
-
-def construirMatrix(rota, deposito, matrixCusto):
-    matrix = []
-    distanciasDeposito = [deposito[0]]
-    for cliente in rota:
-        distanciasDeposito.append(deposito[cliente])
-
-    for cliente in rota:
-        distancia = [deposito[cliente]]
-        for clienteRota in rota:
-            distancia.append(matrixCusto[cliente][clienteRota])
-        matrix.append(distancia)
-
-    matrix.insert(0, distanciasDeposito)
-    return matrix
