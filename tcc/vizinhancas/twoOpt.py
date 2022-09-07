@@ -1,14 +1,17 @@
-import copy
 
+import copy
+from calcularCusto import calcularCusto
 def twoOptVeiculo(rota, matrixCusto):
     menorCusto = 0
     node1 = -1
     node2 = -1
 
+    # print(rota, calcularCusto([rota], matrixCusto))
     if len(rota) >= 5:
         for i in range(len(rota) - 3):
             for j in range(i + 2, len(rota) - 1):
                 novaRota = rota[0:i + 1] + rota[i + 1:j + 1][::-1] + rota[j + 1:]
+                # print(novaRota, calcularCusto([novaRota], matrixCusto))
 
                 melhoriaCusto = matrixCusto[rota[i]][rota[j]] + matrixCusto[rota[i + 1]][rota[j + 1]] - matrixCusto[rota[i]][rota[i + 1]] - matrixCusto[rota[j]][rota[j + 1]]
                 # print(novaRota, melhoriaCusto)

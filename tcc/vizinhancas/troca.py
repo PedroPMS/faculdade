@@ -1,8 +1,10 @@
+from calcularCusto import calcularCusto
 def trocaCliente(veiculo1, veiculo2, matrixCusto, demanda, capacidade):
     menorCusto = 0
     posicao1 = -1
     posicao2 = -1
 
+    # print([veiculo1, veiculo2], calcularCusto([veiculo1, veiculo2], matrixCusto))
     for i in range(1, len(veiculo1) - 1):
         for j in range(1, len(veiculo2) - 1):
             novaDemandaVeiculo1 = demanda[veiculo2[j]] + sum(demanda[veiculo1]) - demanda[veiculo1[i]]
@@ -11,6 +13,7 @@ def trocaCliente(veiculo1, veiculo2, matrixCusto, demanda, capacidade):
             if (novaDemandaVeiculo1 <= capacidade) and (novaDemandaVeiculo2 <= capacidade):
                 novaRota1 = veiculo1[:i] + [veiculo2[j]] + veiculo1[i + 1:]
                 novaRota2 = veiculo2[:j] + [veiculo1[i]] + veiculo2[j + 1:]
+                # print([novaRota1, novaRota2], calcularCusto([novaRota1, novaRota2], matrixCusto))
 
                 custoTroca1 = matrixCusto[veiculo1[i - 1]][veiculo2[j]] + matrixCusto[veiculo2[j]][veiculo1[i + 1]] - matrixCusto[veiculo1[i - 1]][veiculo1[i]] - matrixCusto[veiculo1[i]][veiculo1[i + 1]]
                 custoTroca2 = matrixCusto[veiculo2[j - 1]][veiculo1[i]] + matrixCusto[veiculo1[i]][veiculo2[j + 1]] - matrixCusto[veiculo2[j - 1]][veiculo2[j]] - matrixCusto[veiculo2[j]][veiculo2[j + 1]]

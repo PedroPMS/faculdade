@@ -19,16 +19,18 @@ clientes = clientes.tolist()
 distanciaGeral = sys.maxsize
 start_time = datetime.now()
 for i in range(1):
-    rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:], demanda, capacidade)
-    backup = rotas.copy()
+    # rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:], demanda, capacidade)
+    rotas = [[0, 9, 7, 6, 0], [0, 12, 13, 1, 0]]
+    vrp_graph(rotas, xcoor, ycoor, qtdClientes, 'inicial')
     distanciaTotal = calcularCusto(rotas, clientes)
+    print('distancia inicial', distanciaTotal)
 
     for j in range(1):
         rotas = twoOpt(rotas, clientes)
         rotas = troca(rotas, clientes, demanda, capacidade)
-        rotas = orOpt(rotas, clientes, 1)
-        rotas = orOpt(rotas, clientes, 2)
-        rotas = orOpt(rotas, clientes, 3)
+        # rotas = orOpt(rotas, clientes, 1)
+        # rotas = orOpt(rotas, clientes, 2)
+        # rotas = orOpt(rotas, clientes, 3)
         rotas = realocacao(rotas, clientes, demanda, capacidade)
     distanciaTotal = calcularCusto(rotas, clientes)
 
@@ -37,7 +39,6 @@ for i in range(1):
 
 
 end_time = datetime.now()
-vrp_graph(backup, xcoor, ycoor, qtdClientes, 'inicial')
 vrp_graph(rotas, xcoor, ycoor, qtdClientes, 'final')
 print('Distancia Final =', distanciaGeral, '\n')
 print(rotas)
