@@ -13,7 +13,7 @@ def carregarDados(nomeArquivo):
         for j in range(qtdClientes + 1):
             matrixCusto[i][j] = np.sqrt((xcoor[i] - xcoor[j]) ** 2 + (ycoor[i] - ycoor[j]) ** 2)
 
-    return matrixCusto, demanda, xcoor, ycoor, capacidade, numVeiculos, resultadoOtimo
+    return matrixCusto, demanda, xcoor, ycoor, capacidade, numVeiculos, qtdClientes, resultadoOtimo
 
 def carregar(nomeArquivo):
     linhasArquivo = []
@@ -30,8 +30,8 @@ def carregar(nomeArquivo):
     qtdClientes = int(linhasArquivo[3].split(' ')[-1])
     capacidade = int(linhasArquivo[5].split(' ')[-1])
 
-    inicioCoordenadas = 7
-    inicioDemandas = 40
+    inicioCoordenadas = linhasArquivo.index("NODE_COORD_SECTION") + 1
+    inicioDemandas = linhasArquivo.index("DEMAND_SECTION") + 1
     clientes = []
 
     for i in range(inicioCoordenadas, inicioCoordenadas + int(qtdClientes)):
