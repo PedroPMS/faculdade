@@ -48,10 +48,10 @@ def troca(rotas, matrixCusto, demanda, capacidade):
 
     # print('antes', rotas[Veiculo1], rotas[Veiculo2])
     if(Veiculo1 != -1 and Veiculo2 != -1):
-        New_tour1 = rotas[Veiculo1][:Posicao1] + [rotas[Veiculo2][Posicao2]] + rotas[Veiculo1][Posicao1 + 1:]
-        New_tour2 = rotas[Veiculo2][:Posicao2] + [rotas[Veiculo1][Posicao1]] + rotas[Veiculo2][Posicao2 + 1:]
-        rotas[Veiculo1] = New_tour1
-        rotas[Veiculo2] = New_tour2
+        NovaRota1 = rotas[Veiculo1][:Posicao1] + [rotas[Veiculo2][Posicao2]] + rotas[Veiculo1][Posicao1 + 1:]
+        NovaRota2 = rotas[Veiculo2][:Posicao2] + [rotas[Veiculo1][Posicao1]] + rotas[Veiculo2][Posicao2 + 1:]
+        rotas[Veiculo1] = NovaRota1
+        rotas[Veiculo2] = NovaRota2
     # print('depois', rotas[Veiculo1], rotas[Veiculo2])
 
     return rotas

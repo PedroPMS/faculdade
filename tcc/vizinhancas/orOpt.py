@@ -6,7 +6,6 @@ def orOptVeiculo(veiculo, matrixCusto, K):
     node2 = -1
     node3 = -1
 
-    print(veiculo, calcularCusto([veiculo], matrixCusto))
     if len(veiculo) >= K + 3:
         for i in range(len(veiculo) - K - 1):
             j = i + K
@@ -18,7 +17,6 @@ def orOptVeiculo(veiculo, matrixCusto, K):
                     else:
                         # print(veiculo[0:i + 1], veiculo[j + 1:k + 1], veiculo[i + 1:j + 1], veiculo[k + 1:])
                         novaRota = veiculo[0:i + 1] + veiculo[j + 1:k + 1] + veiculo[i + 1:j + 1] + veiculo[k + 1:]
-                    print(novaRota, calcularCusto([novaRota], matrixCusto))
 
                     reducaoCusto = matrixCusto[veiculo[i]][veiculo[i + 1]] + matrixCusto[veiculo[j]][veiculo[j + 1]] + matrixCusto[veiculo[k]][veiculo[k + 1]]
                     melhoria = matrixCusto[veiculo[i]][veiculo[j + 1]] + matrixCusto[veiculo[k]][veiculo[i + 1]] + matrixCusto[veiculo[j]][veiculo[k + 1]] - reducaoCusto
