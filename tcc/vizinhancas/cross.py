@@ -16,15 +16,15 @@ def crossCliente(veiculo1, veiculo2, matrixCusto, demanda, capacidade):
 
                     if (tour1_new_demand <= capacidade) and (tour2_new_demand <= capacidade):
 
-                        # novaRota1 = veiculo1[:i] + veiculo2[j:l + 1] + veiculo1[k + 1:]
-                        # novaRota2 = veiculo2[:j] + veiculo1[i:k + 1] + veiculo2[l + 1:]
+                        novaRota1 = veiculo1[:i] + veiculo2[j:l + 1] + veiculo1[k + 1:]
+                        novaRota2 = veiculo2[:j] + veiculo1[i:k + 1] + veiculo2[l + 1:]
 
                         cross1 = round(matrixCusto[veiculo1[i - 1]][veiculo2[j]] + matrixCusto[veiculo2[l]][veiculo1[k + 1]] +
                                         matrixCusto[veiculo2[j - 1]][veiculo1[i]] + matrixCusto[veiculo1[k]][veiculo2[l + 1]], 10)
                         cross2 = round(matrixCusto[veiculo1[i - 1]][veiculo1[i]] + matrixCusto[veiculo1[k]][veiculo1[k + 1]] +
                                         matrixCusto[veiculo2[j - 1]][veiculo2[j]] + matrixCusto[veiculo2[l]][veiculo2[l + 1]], 10)
                         melhoriaCross = cross1 - cross2
-                        # print(melhoriaCross)
+                        # print([novaRota1, novaRota2], melhoriaCross)
 
                         if melhoriaCross < melhorMelhoria:
                             melhorMelhoria = melhoriaCross
