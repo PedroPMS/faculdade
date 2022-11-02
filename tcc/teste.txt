@@ -1,0 +1,67 @@
+APRIL, Jay et al. Practical introduction to simulation optimization. In: Proceedings of
+the 35th conference on Winter simulation: driving innovation. [S.l.: s.n.], 2003. p. 71–78.
+ARNALES, Marcos. Pesquisa operacional: para os cursos de engenharia. Rio de Janeiro:
+Campus, 2007.
+BELFIORE, Patrícia Prado; YOSHIZAKI, Hugo Tsugunobu Yoshida. Scatter search para
+problemas de roteirização de veículos com frota heterogênea, janelas de tempo e entregas
+fracionadas. Production, SciELO Brasil, v. 16, p. 455–469, 2006.
+BELHAIZA, Slim; HANSEN, Pierre; LAPORTE, Gilbert. A hybrid variable neighborhood
+tabu search heuristic for the vehicle routing problem with multiple time windows.
+Computers & Operations Research, Elsevier, v. 52, p. 269–281, 2014.
+CARVALHO, Dárlinton Barbosa Feres; OLIVEIRA, Guilherme Arantes de; SOUZA,
+Marcone Jamilson Freitas. Método de pesquisa em vizinhança variável aplicado à resolução
+do problema de roteamento de veículos. XXXV SBPO, p. 676–684, 2003.
+CENSO. Censo IBGE 2010. [S.l.], 2010. Disponível em: <https://educa.ibge.gov.br/
+jovens/conheca-o-brasil/populacao/20551-pessoas-com-deficiencia.html>. Acesso em: 30
+out. 2022.
+CORDEAU, Jean-François; LAPORTE, Gilbert. A tabu search heuristic for the static
+multi-vehicle dial-a-ride problem. Transportation Research Part B: Methodological,
+Elsevier, v. 37, n. 6, p. 579–594, 2003.
+CROES, Georges A. A method for solving traveling-salesman problems. Operations
+research, INFORMS, v. 6, n. 6, p. 791–812, 1958.
+CUNHA, Claudio Barbieri da; BONASSER, Ulisses de Oliveira; ABRAHÃO, Fernando
+Teixeira Mendes. Experimentos computacionais com heurísticas de melhorias para o
+problema do caixeiro viajante. In: XVI Congresso da Anpet. [S.l.: s.n.], 2002.
+DIAZ, Bernabe Dorronsoro. Vrp web. 2012.
+FERREIRA, Huggo Silva. Heurística de busca em vizinhanças variáveis para o problema
+de roteamento de veículos com múltiplas janelas de tempo. Universidade Federal de Minas
+Gerais, 2017.
+FLOOD, Merrill M. The traveling-salesman problem. Operations research, INFORMS,
+v. 4, n. 1, p. 61–75, 1956.
+FU, Liping. A simulation model for evaluating advanced dial-a-ride paratransit systems.
+[S.l.], 2002. v. 36, n. 4, 291-307 p. Disponível em: <https://www.sciencedirect.com/
+science/article/pii/S0965856401000027>.
+GASPAR-CUNHA, António; TAKAHASHI, Ricardo; ANTUNES, Carlos Henggeler.
+Manual de computação evolutiva e metaheurística. [S.l.]: Imprensa da Universidade de
+Coimbra/Coimbra University Press, 2012.
+GOLDBARG, Marco Cesar; LUNA, Henrique Pacca L. Otimização combinatória e
+programação linear: modelos e algoritmos. [S.l.]: Elsevier, 2005.
+35
+GOLDEN, Bruce L. Vehicle routing; methods and studies. Studies in management science
+and systems, North-Holland, v. 16, 1988.
+HANSEN, Pierre; MLADENOVIĆ, Nenad. Variable neighborhood search: Principles and
+applications. European journal of operational research, Elsevier, v. 130, n. 3, p. 449–467,
+2001.
+HOMBERGER, Jörg; GEHRING, Hermann. Two evolutionary metaheuristics for the
+vehicle routing problem with time windows. INFOR: Information Systems and Operational
+Research, Taylor & Francis, v. 37, n. 3, p. 297–318, 1999.
+JÚNIOR, Orivalde Soares da Silva. Roteirização de veículos de carga com múltiplos
+depósitos em sistema de informação geográfica livre. 2009.
+LAPORTE, Gilbert. The vehicle routing problem: An overview of exact and approximate
+algorithms. European journal of operational research, Elsevier, v. 59, n. 3, p. 345–358,
+1992.
+LIU, Jing et al. Marriage in honey bees optimization in continuous domains. In: Handbook
+of AI-based Metaheuristics. [S.l.]: CRC Press, 2021. p. 43–72.
+MUNIC. Pesquisa Munic. [S.l.], 2017. Disponível em: <https://educa.ibge.gov.br/jovens/
+conheca-o-brasil/populacao/20551-pessoas-com-deficiencia.html>. Acesso em: 30 out.
+2022.
+PUC-RIO, Pontifícia Universidade Católica do Rio de Janeiro. Cvrplib. 2022.
+RUSSELL, Robert A. Hybrid heuristics for the vehicle routing problem with time
+windows. Transportation science, INFORMS, v. 29, n. 2, p. 156–166, 1995.
+SHI, Yuhui; EBERHART, Russell C. Fuzzy adaptive particle swarm optimization. In:
+IEEE. Proceedings of the 2001 congress on evolutionary computation (IEEE Cat. No.
+01TH8546). [S.l.], 2001. v. 1, p. 101–106.
+SOLOMON, Marius M. Algorithms for the vehicle routing and scheduling problems with
+time window constraints. Operations research, Informs, v. 35, n. 2, p. 254–265, 1987.
+VENTER, C et al. Enhancing the mobility of disabled people: guidelines for practitioners.
+TRL Limited Overseas Road Note ORN, v. 21, 2004.

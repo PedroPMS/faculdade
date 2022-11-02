@@ -10,7 +10,7 @@ from calcularCusto import calcularCusto
 from vizinhancas.twoOpt import twoOpt
 from vizinhancas.realocacao import realocacao
 from vizinhancas.troca import troca
-from vizinhancas.orOpt import orOpt
+from vizinhancas.circOpt import circOpt
 from vizinhancas.cross import crossAleatorio
 
 from plotarRotas import vrp_graph
@@ -20,6 +20,7 @@ from plotarRotas import vrp_graph
 def vrp(rodadas = 10, arquivo = 'test.txt'):
     clientes, demanda, xcoor, ycoor, capacidade, numVeiculos, qtdClientes, resultadoOtimo = carregarDados(arquivo)
     clientes = clientes.tolist()
+    vrp_graph(clientes, xcoor, ycoor, qtdClientes, 'final')
 
     # print([numVeiculos, qtdClientes, resultadoOtimo])
 
@@ -28,16 +29,16 @@ def vrp(rodadas = 10, arquivo = 'test.txt'):
 
     media = []
     for i in range(1):
-        rotas = dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:], demanda, capacidade)
+        rotas = [[0, 6, 14, 9, 7, 10, 0]]#dividirClientes.gerarRotasIniciais(numVeiculos, clientes[:], demanda, capacidade)
         distanciaTotal = calcularCusto(rotas, clientes)
         # print('distancia inicial', distanciaTotal)
 
         for j in range(rodadas):
-            rotas = twoOpt(rotas, clientes)
-            rotas = orOpt(rotas, clientes, 3)
-            rotas = troca(rotas, clientes, demanda, capacidade)
-            rotas = realocacao(rotas, clientes, demanda, capacidade)
-            rotas = crossAleatorio(rotas, clientes, demanda, capacidade)
+            # rotas = twoOpt(rotas, clientes)
+            rotas = circOpt(rotas, clientes)
+            # rotas = troca(rotas, clientes, demanda, capacidade)
+            # rotas = realocacao(rotas, clientes, demanda, capacidade)
+            # rotas = crossAleatorio(rotas, clientes, demanda, capacidade)
         distanciaTotal = calcularCusto(rotas, clientes)
 
         media.append(distanciaTotal)
@@ -60,16 +61,16 @@ def vrp(rodadas = 10, arquivo = 'test.txt'):
     # print('Duration: ', tempo)
     return resultadoOtimo, melhorCusto, tempo
 
-diretorio = 'instancias/G4'
-with open('resultados.csv', 'a') as f:
-    write = csv.writer(f)
-    for (dirpath, dirnames, filenames) in os.walk(diretorio):
-        for file in filenames:
-            instancia = diretorio + '/'+ file
-            print(instancia)
-            resultadoOtimo, melhorCusto, tempo = vrp(500, instancia)
-            write.writerow([file, resultadoOtimo, melhorCusto, tempo])
+# diretorio = 'instancias/G4'
+# with open('resultados.csv', 'a') as f:
+#     write = csv.writer(f)
+#     for (dirpath, dirnames, filenames) in os.walk(diretorio):
+#         for file in filenames:
+#             instancia = diretorio + '/'+ file
+#             print(instancia)
+#             resultadoOtimo, melhorCusto, tempo = vrp(500, instancia)
+#             write.writerow([file, resultadoOtimo, melhorCusto, tempo])
 
 
-    # resultadoOtimo, melhorCusto, tempo = vrp(500, 'instancias/G4/M-n200-k16.txt')
-    # write.writerow(['M-n200-k16', resultadoOtimo, melhorCusto, tempo])
+resultadoOtimo, melhorCusto, tempo = vrp(1, 'instancias/G1/A-n32-k5.txt')
+print(['M-n200-k16', resultadoOtimo, melhorCusto, tempo])
